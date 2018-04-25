@@ -1,0 +1,19 @@
+# Getting the currently authenticated user
+
+===Getting login user
+
+---query
+query {
+    viewer {
+        login
+    }
+}
+
+---expected_response
+{
+    "data": {
+        "viewer": {
+            "login": "iMega"
+        }
+    }
+}

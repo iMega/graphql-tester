@@ -1,0 +1,12 @@
+branches:
+  only:
+  - master
+language: ruby
+services:
+- docker
+script:
+- make build HEADERS=$HEADERS || exit 1
+after_success:
+- |
+  [ "${TRAVIS_BRANCH}" == "master" ] && [ "$TRAVIS_EVENT_TYPE" != "cron" ] &&
+    (make release DOCKER_USER=$DOCKER_USER DOCKER_PASS=$DOCKER_PASS)
