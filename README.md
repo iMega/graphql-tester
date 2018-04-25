@@ -7,9 +7,11 @@ in progress
 
 ### Usage
 
+```
 docker run -v `pwd`/github_api:/data imega/graphql-tester:0.0.1 -H 'Authorization: Bearer <token>' -u https://api.github.com/graphql /data
+```
 
-<token> - [Creating a personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/)
+token - [Creating a personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/)
 
 ### Referense
 
