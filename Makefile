@@ -11,7 +11,8 @@ build: buildfs
 
 buildfs: WD = /go/src/github.com/imega/graphql-tester
 buildfs:
-	@sed -i '' -e 's/0.0.0/$(TAG)/g' $(CURDIR)/cmd/version.go
+	ls -l $(CURDIR)/cmd
+	sed -i '' -e 's/0.0.0/$(TAG)/g' $(CURDIR)/cmd/version.go
 	@docker run -v $(CURDIR):$(WD) -w $(WD) golang:1.10-alpine go build -v -o src/graphql-tester
 	@docker run --rm \
 		-v $(CURDIR)/runner:/runner \
