@@ -2,7 +2,6 @@ package tester
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
@@ -20,17 +19,17 @@ var (
 	dumpReq = func(req *http.Request) {
 		dump, err := httputil.DumpRequestOut(req, true)
 		if err != nil {
-			fmt.Printf("Error %s", err)
+			MessageError("Error %s", err)
 		}
-		fmt.Printf("%s\nREQUEST:\n%s\n%s\n", cyanColor, string(dump), defaultStyle)
+		Message("%s\nREQUEST:\n%s\n%s\n", cyanColor, string(dump), defaultStyle)
 	}
 
 	dumpRes = func(res *http.Response) {
 		dump, err := httputil.DumpResponse(res, true)
 		if err != nil {
-			fmt.Printf("Error %s", err)
+			MessageError("Error %s", err)
 		}
-		fmt.Printf("%s\nRESPONSE:\n%s\n%s\n", yellowColor, string(dump), defaultStyle)
+		Message("%s\nRESPONSE:\n%s\n%s\n", yellowColor, string(dump), defaultStyle)
 	}
 )
 

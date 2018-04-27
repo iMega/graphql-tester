@@ -20,7 +20,7 @@ func main() {
 		Headers: cmd.Options.Headers,
 		Path:    cmd.Options.Path,
 		StdOut:  buf,
-		Verbose: false,
+		Verbose: cmd.Options.Verbosity,
 	}
 
 	scan, err := lexer.Compile()

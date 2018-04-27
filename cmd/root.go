@@ -8,36 +8,30 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const version string = "0.0.1"
-
 type OptionsCmd struct {
-	URL     string
-	Path    []string
-	Headers map[string]string
+	URL       string
+	Path      []string
+	Headers   map[string]string
+	Verbosity bool
 }
 
 var (
 	Options OptionsCmd
 
-	url     string
-	headers string
+	url        string
+	headersOpt string
+	verbosity  bool
 
 	rootCmd = &cobra.Command{
-		Use:     "qltester",
-		Version: version,
+		Use:     "GraphQL Tester",
+		Version: getVersion(),
 		Run: func(cmd *cobra.Command, args []string) {
 			Options = OptionsCmd{
-				URL:     strings.Trim(url, "' \""),
-				Path:    args,
-				Headers: map[string]string{},
+				URL:       strings.Trim(url, "' \""),
+				Path:      args,
+				Headers:   parseHeaders(headersOpt),
+				Verbosity: verbosity,
 			}
-
-			hs := strings.Split(headers, ";")
-			for _, v := range hs {
-				kv := strings.Split(v, ":")
-				Options.Headers[strings.TrimSpace(kv[0])] = strings.TrimSpace(kv[1])
-			}
-
 		},
 	}
 )
@@ -53,5 +47,29 @@ func Execute() {
 func init() {
 	cobra.OnInitialize()
 	rootCmd.PersistentFlags().StringVarP(&url, "url", "u", "", "usage")
-	rootCmd.PersistentFlags().StringVarP(&headers, "headers", "H", "", "usage")
+	rootCmd.PersistentFlags().StringVarP(&headersOpt, "headers", "H", "", "usage")
+	rootCmd.PersistentFlags().BoolVarP(&verbosity, "verbosity", "v", false, "usage")
+}
+
+type headers map[string]string
+
+func parseHeaders(h string) headers {
+	res := headers{}
+	if len(h) == 0 {
+		return res
+	}
+
+	hs := strings.Split(h, ";")
+	for _, v := range hs {
+		if len(v) == 0 {
+			continue
+		}
+		kv := strings.Split(v, ":")
+		if len(kv) != 2 {
+			continue
+		}
+		res[strings.TrimSpace(kv[0])] = strings.TrimSpace(kv[1])
+	}
+
+	return res
 }
