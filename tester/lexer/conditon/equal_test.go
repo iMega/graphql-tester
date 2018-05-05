@@ -1,7 +1,6 @@
 package lexer
 
 import (
-	"fmt"
 	"testing"
 
 	lm "github.com/timtadh/lexmachine"
@@ -30,13 +29,12 @@ func Test_Lexer_ConditionEqual_ActionFunc(t *testing.T) {
 		t.Fatalf("failed to compile, %s", err)
 	}
 
-	eqScanner(t, lex, []byte("equal data\n"), "data")
-	eqScanner(t, lex, []byte("equal   data  \n"), "data")
-
-	eqScanner(t, lex, []byte("equal data|"), "data")
-	eqScanner(t, lex, []byte("equal   data  |"), "data")
-
-	eqScanner(t, lex, []byte("equal data"), "data")
+	eqScanner(t, lex, []byte("equal data\n"), []string{"data"})
+	eqScanner(t, lex, []byte("equal   data  \n"), []string{"data"})
+	eqScanner(t, lex, []byte("equal data |equal data2\n"), []string{"data", "data2"})
+	eqScanner(t, lex, []byte("equal data | equal data2\n"), []string{"data", "data2"})
+	eqScanner(t, lex, []byte("equal   data   |    equal data2\n"), []string{"data", "data2"})
+	eqScanner(t, lex, []byte("equal data"), []string{"data"})
 }
 
 func Test_Lexer_ConditionEqual_Cmd(t *testing.T) {
@@ -48,12 +46,12 @@ func equalCmd(t *testing.T, in, val string, expected error) {
 	f := eq.Cmd()
 	_, err := f(in, val)
 
-	fmt.Printf("%#v\n", err)
-
-	switch err.(type) {
-	case error:
-
-	}
+	//fmt.Printf("%#v\n", err)
+	//
+	//switch err.(type) {
+	//case error:
+	//
+	//}
 	if err != expected {
 		t.Fatalf("failed to execute command, %s", err)
 	}
@@ -91,7 +89,8 @@ func Test_equal_Cmd_InvalidSelector_ReturnsError(t *testing.T) {
 	}
 }
 
-func eqScanner(t *testing.T, lex *lm.Lexer, in []byte, expected string) {
+func eqScanner(t *testing.T, lex *lm.Lexer, in []byte, expected []string) {
+	var idx int
 	scanner, err := lex.Scanner(in)
 	if err != nil {
 		t.Fatalf("failed to create scanner, %s", err)
@@ -104,8 +103,9 @@ func eqScanner(t *testing.T, lex *lm.Lexer, in []byte, expected string) {
 		token := tok.(*lm.Token)
 		s, _ := token.Value.(string)
 
-		if s != expected {
+		if s != expected[idx] {
 			t.Fatal("scanned value is not equal expected")
 		}
+		idx++
 	}
 }

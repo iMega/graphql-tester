@@ -22,7 +22,7 @@ func init() {
 
 func (u *conditionJq) ActionFunc(token int) ([]byte, lexmachine.Action) {
 	u.token = token
-	return []byte(`jq.*?[\||\n]?`), lexmachine.Action(u.action)
+	return []byte(`\s*?jq[^|]+[|\n]?`), lexmachine.Action(u.action)
 }
 
 func (u *conditionJq) action(s *lexmachine.Scanner, m *machines.Match) (interface{}, error) {
@@ -39,23 +39,27 @@ func (u *conditionJq) action(s *lexmachine.Scanner, m *machines.Match) (interfac
 	return s.Token(u.token, res[1], m), nil
 }
 
-func (*conditionJq) Scan(token *lexmachine.Token, s *tester.Suite) {}
+func (*conditionJq) Scan(token *lexmachine.Token, s *tester.Suite) error {
+	return nil
+}
 
 func (*conditionJq) Cmd() tester.CmdFunc {
 	return func(in interface{}, val string) (interface{}, error) {
 		a, ok := in.([]byte)
 		if !ok {
-			fmt.Println("not ok")
+			return nil, fmt.Errorf("not ok")
 		}
 
 		b, err := extractValueFromJson(val, a)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to extract selector, %s", err)
 		}
 
 		return strings.Trim(string(b), "\""), nil
 	}
 }
+
+func (conditionJq) SetLexer(l *lexmachine.Lexer) {}
 
 func extractValueFromJson(selector string, data []byte) ([]byte, error) {
 	op, err := jq.Parse(selector)

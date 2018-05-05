@@ -63,15 +63,13 @@ func Test_Lexer_ConditionJq_ActionFunc(t *testing.T) {
 		t.Fatalf("failed to compile, %s", err)
 	}
 
-	jqScanner(t, lex, []byte("jq data.value\n"), "data.value")
-	jqScanner(t, lex, []byte("jq   data.value  \n"), "data.value")
-
-	jqScanner(t, lex, []byte("jq data.value|"), "data.value")
-	jqScanner(t, lex, []byte("jq   data.value  |"), "data.value")
-
-	jqScanner(t, lex, []byte("jq data.value"), "data.value")
-
-	jqScanner(t, lex, []byte("jq   data.value.[0:1].test  |"), "data.value.[0:1].test")
+	jqScanner(t, lex, []byte("jq data.value\n"), []string{"data.value"})
+	jqScanner(t, lex, []byte("jq   data.value  \n"), []string{"data.value"})
+	jqScanner(t, lex, []byte("jq data.value |jq data\n"), []string{"data.value", "data"})
+	jqScanner(t, lex, []byte("jq data.value | jq data\n"), []string{"data.value", "data"})
+	jqScanner(t, lex, []byte("jq   data.value   |    jq data\n"), []string{"data.value", "data"})
+	jqScanner(t, lex, []byte("jq data.value"), []string{"data.value"})
+	jqScanner(t, lex, []byte("jq   data.value.[0:1].test | jq data.value\n"), []string{"data.value.[0:1].test", "data.value"})
 }
 
 func Test_Lexer_ConditionJq_Cmd_ReturnsNoError(t *testing.T) {
@@ -137,7 +135,8 @@ func jqAction(t *testing.T, in []byte, expected string) {
 	}
 }
 
-func jqScanner(t *testing.T, lex *lm.Lexer, in []byte, expected string) {
+func jqScanner(t *testing.T, lex *lm.Lexer, in []byte, expected []string) {
+	var idx int
 	scanner, err := lex.Scanner(in)
 	if err != nil {
 		t.Fatalf("failed to create scanner, %s", err)
@@ -149,9 +148,9 @@ func jqScanner(t *testing.T, lex *lm.Lexer, in []byte, expected string) {
 		}
 		token := tok.(*lm.Token)
 		s, _ := token.Value.(string)
-
-		if s != expected {
+		if s != expected[idx] {
 			t.Fatal("scanned value is not equal expected")
 		}
+		idx++
 	}
 }

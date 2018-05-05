@@ -20,7 +20,7 @@ func init() {
 
 func (u *conditionEqual) ActionFunc(token int) ([]byte, lexmachine.Action) {
 	u.token = token
-	return []byte(`equal.*?[\||\n]?`), lexmachine.Action(u.action)
+	return []byte(`\s*?equal[^|]+[|\n]?`), lexmachine.Action(u.action)
 }
 
 func (u *conditionEqual) action(s *lexmachine.Scanner, m *machines.Match) (interface{}, error) {
@@ -33,7 +33,9 @@ func (u *conditionEqual) action(s *lexmachine.Scanner, m *machines.Match) (inter
 	return s.Token(u.token, res[1], m), nil
 }
 
-func (conditionEqual) Scan(token *lexmachine.Token, s *tester.Suite) {}
+func (conditionEqual) Scan(token *lexmachine.Token, s *tester.Suite) error {
+	return nil
+}
 
 func (*conditionEqual) Cmd() tester.CmdFunc {
 	return func(in interface{}, val string) (interface{}, error) {
@@ -47,3 +49,5 @@ func (*conditionEqual) Cmd() tester.CmdFunc {
 		return nil, nil
 	}
 }
+
+func (conditionEqual) SetLexer(l *lexmachine.Lexer) {}
