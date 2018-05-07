@@ -46,12 +46,6 @@ func equalCmd(t *testing.T, in, val string, expected error) {
 	f := eq.Cmd()
 	_, err := f(in, val)
 
-	//fmt.Printf("%#v\n", err)
-	//
-	//switch err.(type) {
-	//case error:
-	//
-	//}
 	if err != expected {
 		t.Fatalf("failed to execute command, %s", err)
 	}

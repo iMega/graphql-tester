@@ -42,7 +42,7 @@ func (c *condition) Scan(token *lexmachine.Token, s *tester.Suite) error {
 	n := len(s.Tests) - 1
 	val, _ := token.Value.(string)
 
-	//read lines
+	//@todo read lines
 
 	err := c.scanConds([]byte(val), &s.Tests[n])
 	if err != nil {
