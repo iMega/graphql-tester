@@ -19,9 +19,16 @@ func (u *skipUnit) action(s *lexmachine.Scanner, m *machines.Match) (interface{}
 	return nil, nil
 }
 
-func (*skipUnit) Scan(*lexmachine.Token, *tester.Suite) {
+func (skipUnit) Scan(*lexmachine.Token, *tester.Suite) error {
+	return nil
+}
+
+func (skipUnit) Cmd() tester.CmdFunc {
+	return nil
 }
 
 func init() {
 	AddUnit(&skipUnit{})
 }
+
+func (skipUnit) SetLexer(l *lexmachine.Lexer) {}

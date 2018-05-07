@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
+	"strings"
 )
 
 const defaultStyle = "\x1b[0m"
@@ -21,7 +22,12 @@ var (
 		if err != nil {
 			MessageError("Error %s", err)
 		}
-		Message("%s\nREQUEST:\n%s\n%s\n", cyanColor, string(dump), defaultStyle)
+
+		Message("%sREQUEST:", cyanColor)
+		for _, l := range strings.Split(string(dump), "\n") {
+			Message("%s", l)
+		}
+		Message("%s", defaultStyle)
 	}
 
 	dumpRes = func(res *http.Response) {
@@ -29,7 +35,12 @@ var (
 		if err != nil {
 			MessageError("Error %s", err)
 		}
-		Message("%s\nRESPONSE:\n%s\n%s\n", yellowColor, string(dump), defaultStyle)
+
+		Message("%sRESPONSE:", yellowColor)
+		for _, l := range strings.Split(string(dump), "\n") {
+			Message("%s", l)
+		}
+		Message("%s", defaultStyle)
 	}
 )
 

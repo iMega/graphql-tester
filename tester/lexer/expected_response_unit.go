@@ -31,7 +31,7 @@ func (u *expectedResponse) action(s *lexmachine.Scanner, m *machines.Match) (int
 	return s.Token(u.token, res[0], m), nil
 }
 
-func (u *expectedResponse) Scan(token *lexmachine.Token, s *tester.Suite) {
+func (u *expectedResponse) Scan(token *lexmachine.Token, s *tester.Suite) error {
 	n := len(s.Tests) - 1
 	q, _ := token.Value.(string)
 	s.Tests[n].Response = tester.Element{
@@ -41,4 +41,11 @@ func (u *expectedResponse) Scan(token *lexmachine.Token, s *tester.Suite) {
 		EndLine:     token.EndLine,
 		EndColumn:   token.EndColumn,
 	}
+	return nil
 }
+
+func (expectedResponse) Cmd() tester.CmdFunc {
+	return nil
+}
+
+func (expectedResponse) SetLexer(l *lexmachine.Lexer) {}

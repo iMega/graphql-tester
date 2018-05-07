@@ -10,6 +10,7 @@ const (
 	MSG = iota
 	ERR
 	TST
+	EXIT
 )
 
 var (
@@ -26,6 +27,8 @@ type MessageCh struct {
 func PrinterWatch(msg <-chan MessageCh) {
 	for m := range msg {
 		switch m.Type {
+		case EXIT:
+			close(StdOut)
 		case ERR:
 			msg := fmt.Sprintf(m.Format, m.Args...)
 			fmt.Println(padding(msg, "fail", true))
@@ -60,6 +63,12 @@ func MessageError(format string, a ...interface{}) {
 		Type:   ERR,
 		Format: format,
 		Args:   a,
+	}
+}
+
+func MessageExit() {
+	StdOut <- MessageCh{
+		Type: EXIT,
 	}
 }
 

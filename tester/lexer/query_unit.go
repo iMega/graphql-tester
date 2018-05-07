@@ -27,7 +27,7 @@ func (u *queryUnit) action(s *lexmachine.Scanner, m *machines.Match) (interface{
 	return s.Token(u.token, res[0], m), nil
 }
 
-func (*queryUnit) Scan(token *lexmachine.Token, s *tester.Suite) {
+func (*queryUnit) Scan(token *lexmachine.Token, s *tester.Suite) error {
 	n := len(s.Tests) - 1
 	q, _ := token.Value.(string)
 	s.Tests[n].Query = tester.Element{
@@ -37,8 +37,15 @@ func (*queryUnit) Scan(token *lexmachine.Token, s *tester.Suite) {
 		EndLine:     token.EndLine,
 		EndColumn:   token.EndColumn,
 	}
+	return nil
+}
+
+func (queryUnit) Cmd() tester.CmdFunc {
+	return nil
 }
 
 func init() {
 	AddUnit(&queryUnit{})
 }
+
+func (queryUnit) SetLexer(l *lexmachine.Lexer) {}

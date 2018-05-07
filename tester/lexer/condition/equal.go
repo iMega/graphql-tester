@@ -1,4 +1,4 @@
-package lexer
+package condition
 
 import (
 	"fmt"
@@ -46,7 +46,7 @@ func (*conditionEqual) Cmd() tester.CmdFunc {
 		if s != val {
 			return nil, fmt.Errorf("assert equal, not equal %s != %v", s, val)
 		}
-		return nil, nil
+		return "true", nil
 	}
 }
 
