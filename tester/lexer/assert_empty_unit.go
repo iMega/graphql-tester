@@ -27,8 +27,15 @@ func (u *empty) action(s *lexmachine.Scanner, m *machines.Match) (interface{}, e
 	return s.Token(u.token, selectors, m), nil
 }
 
-func (*empty) Scan(token *lexmachine.Token, s *tester.Suite) {
+func (*empty) Scan(token *lexmachine.Token, s *tester.Suite) error {
 	n := len(s.Tests) - 1
 	q, _ := token.Value.([]string)
 	s.Tests[n].Assertion = append(s.Tests[n].Assertion, tester.Assert{nil, q})
+	return nil
 }
+
+func (*empty) Cmd() tester.CmdFunc {
+	return nil
+}
+
+func (empty) SetLexer(l *lexmachine.Lexer) {}

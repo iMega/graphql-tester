@@ -69,3 +69,15 @@ data.viewer.id
 ### Examples
 
 See folder github_api
+
+
+### Conditions
+
+jq retuns json value from request, accept arg []byte
+equal returns error if values not equal
+has retuns error if array not exists value
+!equal see equa;
+!has
+
+
+

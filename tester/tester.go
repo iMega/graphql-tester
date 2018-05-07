@@ -66,11 +66,16 @@ func runSuite() error {
 			break
 		}
 	}
-	Message("\n")
+	MessageExit()
 	return nil
 }
 
 func runTest(test Test) error {
+	var (
+		actual = map[string]interface{}{}
+		expect = map[string]interface{}{}
+	)
+
 	b, err := requestBodyBuilder(test)
 	if err != nil {
 		return err
@@ -81,19 +86,17 @@ func runTest(test Test) error {
 		return err
 	}
 
-	var (
-		actual = map[string]interface{}{}
-		expect = map[string]interface{}{}
-	)
 	if err = json.Unmarshal(b, &actual); err != nil {
 		MessageError("failed to encode response, %s\nRESPONSE: %s", err.Error(), b)
 		return fmt.Errorf("failed to encode response, %s", err.Error())
 	}
 
-	res := replaceVarsToValuesInBody(suite.VarSet, string(test.Response.Body))
-	if err = json.Unmarshal([]byte(res), &expect); err != nil {
-		MessageError("failed to encode response, %s\nRESPONSE: %s", err.Error(), test.Response.Body)
-		return fmt.Errorf("failed to encode expected request, %s", err.Error())
+	if test.HasExpectedResponseBody() {
+		res := replaceVarsToValuesInBody(suite.VarSet, string(test.Response.Body))
+		if err = json.Unmarshal([]byte(res), &expect); err != nil {
+			MessageError("failed to encode response, %s\nRESPONSE: %s", err.Error(), test.Response.Body)
+			return fmt.Errorf("failed to encode expected request, %s", err.Error())
+		}
 	}
 
 	if ok, msg := assertRequestContains(actual, expect); !ok {
@@ -112,6 +115,18 @@ func runTest(test Test) error {
 			return fmt.Errorf("failed to extract value from json, %s", err)
 		}
 		suite.VarSet[k] = strings.Trim(string(value), "\"")
+	}
+
+	var pipe interface{}
+	pipe = b
+	for _, c := range test.Conditions {
+		for i := 0; i < len(c); i++ {
+			p, err := c[i].Cmd(pipe, c[i].Value)
+			if err != nil {
+				return fmt.Errorf("failed to resolve condition command, %s", err)
+			}
+			pipe = p
+		}
 	}
 
 	for _, a := range test.Assertion {

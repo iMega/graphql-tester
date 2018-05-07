@@ -31,10 +31,15 @@ func (u *notEmpty) action(s *lexmachine.Scanner, m *machines.Match) (interface{}
 	return s.Token(u.token, selectors, m), nil
 }
 
-func (*notEmpty) Scan(token *lexmachine.Token, s *tester.Suite) {
+func (*notEmpty) Scan(token *lexmachine.Token, s *tester.Suite) error {
 	n := len(s.Tests) - 1
 	q, _ := token.Value.([]string)
 	s.Tests[n].Assertion = append(s.Tests[n].Assertion, tester.Assert{q, nil})
+	return nil
+}
+
+func (*notEmpty) Cmd() tester.CmdFunc {
+	return nil
 }
 
 func parsingAssertions(body string) ([]string, error) {
@@ -53,3 +58,5 @@ func parsingAssertions(body string) ([]string, error) {
 	}
 	return lines, scanner.Err()
 }
+
+func (notEmpty) SetLexer(l *lexmachine.Lexer) {}

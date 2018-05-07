@@ -23,7 +23,7 @@ func (u *suiteUnit) action(s *lexmachine.Scanner, m *machines.Match) (interface{
 	return s.Token(u.token, string(m.Bytes), m), nil
 }
 
-func (suiteUnit) Scan(token *lexmachine.Token, s *tester.Suite) {
+func (suiteUnit) Scan(token *lexmachine.Token, s *tester.Suite) error {
 	s.Title = tester.Element{
 		Body:        token.Lexeme,
 		StartLine:   token.StartLine,
@@ -31,4 +31,11 @@ func (suiteUnit) Scan(token *lexmachine.Token, s *tester.Suite) {
 		EndLine:     token.EndLine,
 		EndColumn:   token.EndColumn,
 	}
+	return nil
 }
+
+func (suiteUnit) Cmd() tester.CmdFunc {
+	return nil
+}
+
+func (suiteUnit) SetLexer(l *lexmachine.Lexer) {}

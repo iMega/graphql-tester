@@ -34,10 +34,15 @@ func (u *setVars) action(s *lexmachine.Scanner, m *machines.Match) (interface{},
 	return s.Token(u.token, res[0], m), nil
 }
 
-func (*setVars) Scan(token *lexmachine.Token, s *tester.Suite) {
+func (*setVars) Scan(token *lexmachine.Token, s *tester.Suite) error {
 	n := len(s.Tests) - 1
 	q, _ := token.Value.(string)
 	s.Tests[n].ResponseVars = responseVars([]byte(q))
+	return nil
+}
+
+func (setVars) Cmd() tester.CmdFunc {
+	return nil
 }
 
 func responseVars(val []byte) tester.Vars {
@@ -57,3 +62,5 @@ func responseVars(val []byte) tester.Vars {
 
 	return res
 }
+
+func (setVars) SetLexer(l *lexmachine.Lexer) {}

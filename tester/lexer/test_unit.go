@@ -22,7 +22,7 @@ func (u *testUnit) action(s *lexmachine.Scanner, m *machines.Match) (interface{}
 	return s.Token(u.token, res, m), nil
 }
 
-func (*testUnit) Scan(token *lexmachine.Token, s *tester.Suite) {
+func (*testUnit) Scan(token *lexmachine.Token, s *tester.Suite) error {
 	q, _ := token.Value.(string)
 	test := tester.Test{
 		Title: tester.Element{
@@ -34,8 +34,15 @@ func (*testUnit) Scan(token *lexmachine.Token, s *tester.Suite) {
 		},
 	}
 	s.Tests = append(s.Tests, test)
+	return nil
+}
+
+func (testUnit) Cmd() tester.CmdFunc {
+	return nil
 }
 
 func init() {
 	AddUnit(&testUnit{})
 }
+
+func (testUnit) SetLexer(l *lexmachine.Lexer) {}
