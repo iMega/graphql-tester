@@ -52,6 +52,7 @@ func RunNew(options Options, scan Scan) error {
 			return fmt.Errorf("failed to run suite %s, %s", f, err)
 		}
 	}
+	MessageExit()
 
 	return nil
 }
@@ -66,7 +67,7 @@ func runSuite() error {
 			break
 		}
 	}
-	MessageExit()
+	Message("")
 	return nil
 }
 
