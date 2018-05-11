@@ -14,7 +14,7 @@ type queryUnit struct {
 
 func (u *queryUnit) ActionFunc(token int) ([]byte, lexmachine.Action) {
 	u.token = token
-	return []byte(`---query\n(([^\n]+)\n)+`), lexmachine.Action(u.action)
+	return []byte(`---\s*query\s*\n(([^\n]+)\n)+`), lexmachine.Action(u.action)
 }
 
 func (u *queryUnit) action(s *lexmachine.Scanner, m *machines.Match) (interface{}, error) {
