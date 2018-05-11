@@ -1,0 +1,47 @@
+# Get an open source license by its key
+
+=== Get an open source license by its key
+
+--- query
+query License($key: String!) {
+  license(key: $key) {
+    id
+    body
+    description
+    hidden
+    featured
+    implementation
+    key
+    name
+    nickname
+    url
+  }
+}
+
+---query_var
+{
+    "variables": {
+        "key": "mit"
+    },
+    "operationName": "License"
+}
+
+---expected_response
+{
+  "data": {
+    "license": {
+      "id": "MDc6TGljZW5zZTEz",
+      "description": "A short and simple permissive license with conditions only requiring preservation of copyright and license notices. Licensed works, modifications, and larger works may be distributed under different terms and without source code.",
+      "hidden": true,
+      "featured": true,
+      "implementation": "Create a text file (typically named LICENSE or LICENSE.txt) in the root of your source code and copy the text of the license into the file. Replace [year] with the current year and [fullname] with the name (or names) of the copyright holders.",
+      "key": "mit",
+      "name": "MIT License",
+      "nickname": null,
+      "url": "http://choosealicense.com/licenses/mit/"
+    }
+  }
+}
+
+--- condition
+jq data.license.name | equal MIT License
