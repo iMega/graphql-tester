@@ -1,6 +1,8 @@
 package lexer
 
 import (
+	"strings"
+
 	"github.com/imega/graphql-tester/tester"
 	"github.com/timtadh/lexmachine"
 	"github.com/timtadh/lexmachine/machines"
@@ -20,7 +22,8 @@ func (u *suiteUnit) ActionFunc(token int) ([]byte, lexmachine.Action) {
 }
 
 func (u *suiteUnit) action(s *lexmachine.Scanner, m *machines.Match) (interface{}, error) {
-	return s.Token(u.token, string(m.Bytes), m), nil
+	res := strings.Trim(string(m.Bytes), " \n")
+	return s.Token(u.token, res, m), nil
 }
 
 func (suiteUnit) Scan(token *lexmachine.Token, s *tester.Suite) error {
