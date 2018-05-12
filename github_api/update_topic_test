@@ -1,0 +1,67 @@
+# Updates the repository's topics
+
+=== Getting repository
+
+--- query
+query Repository($owner: String!, $name: String!){
+  repository(owner: $owner, name: $name){
+    id
+  }
+}
+
+---query_var
+{
+    "variables":{
+        "owner": "imega",
+        "name": "graphql-tester"
+    },
+    "operationName": "Repository"
+}
+
+---set_vars_from_response
+@repoID = data.repository.id
+
+
+
+=== Update topic
+
+--- query
+mutation UpdateTopics($input: UpdateTopicsInput!){
+  updateTopics(input: $input){
+    repository{
+      ... on Repository{
+        name
+        repositoryTopics(first:1){
+          nodes{
+            ... on RepositoryTopic{
+              topic{
+                ... on Topic{
+                  name
+                }
+              }
+            }
+          }
+          totalCount
+        }
+      }
+    }
+  }
+}
+
+---query_var
+{
+    "variables":{
+        "input": {
+            "repositoryId": "@repoID",
+            "topicNames": [
+                "version-0-0-8"
+            ]
+        }
+    },
+    "operationName": "UpdateTopics"
+}
+
+--- condition
+jq data.updateTopics.repository.repositoryTopics.totalCount | equal 1
+jq data.updateTopics.repository.name | equal graphql-tester
+jq data.updateTopics.repository.repositoryTopics.nodes.[0].topic.name | equal version-0-0-8

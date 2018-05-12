@@ -52,7 +52,7 @@ func (*conditionJq) Cmd() tester.CmdFunc {
 
 		b, err := extractValueFromJson(val, a)
 		if err != nil {
-			return nil, fmt.Errorf("failed to extract selector, %s", err)
+			return nil, fmt.Errorf("failed to extract selector '%s', %s", val, err)
 		}
 
 		return strings.Trim(string(b), "\""), nil
