@@ -119,8 +119,8 @@ func runTest(test Test) error {
 	}
 
 	var pipe interface{}
-	pipe = b
 	for _, c := range test.Conditions {
+		pipe = b
 		for i := 0; i < len(c); i++ {
 			p, err := c[i].Cmd(pipe, c[i].Value)
 			if err != nil {

@@ -78,7 +78,7 @@ func Test_Lexer_Condition_Scan(t *testing.T) {
 	}
 
 	token := &lexmachine.Token{
-		Value: "jq data.value\n",
+		Value: "jq data.value\njq data.value",
 	}
 
 	suite := &tester.Suite{
@@ -95,7 +95,7 @@ func Test_Lexer_Condition_Scan(t *testing.T) {
 		t.Fatalf("failed to scan, %s", err)
 	}
 
-	if len(suite.Tests[0].Conditions) == 0 {
+	if len(suite.Tests[0].Conditions) != 2 {
 		t.Fatal("conditions are empty")
 	}
 }

@@ -45,3 +45,7 @@ query License($key: String!) {
 
 --- condition
 jq data.license.name | equal MIT License
+jq data.license.key | equal mit
+jq data.license.id | equal MDc6TGljZW5zZTEz
+
+

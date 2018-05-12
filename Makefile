@@ -1,8 +1,8 @@
-TAG = 0.0.6
+TAG = 0.0.7
 
-defaiut:
+default:
 	go build
-	./graphql-tester -v -H '$(GITHUB_TOKEN)' -u https://api.github.com/graphql github_api
+	./graphql-tester -H '$(GITHUB_TOKEN)' -u https://api.github.com/graphql github_api
 
 release:
 	@docker login --username $(DOCKER_USER) --password $(DOCKER_PASS)

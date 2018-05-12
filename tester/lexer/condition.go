@@ -1,9 +1,9 @@
 package lexer
 
 import (
-	"regexp"
-
 	"fmt"
+	"regexp"
+	"strings"
 
 	"github.com/imega/graphql-tester/tester"
 	"github.com/timtadh/lexmachine"
@@ -25,7 +25,7 @@ func (u *condition) SetLexer(l *lexmachine.Lexer) {
 
 func (u *condition) ActionFunc(token int) ([]byte, lexmachine.Action) {
 	u.token = token
-	return []byte(`---\s*?condition\n(([^\n]+)\n)+`), lexmachine.Action(u.action)
+	return []byte(`---\s*?condition\s*?\n(([^\n]+)\n)+`), lexmachine.Action(u.action)
 }
 
 func (u *condition) action(s *lexmachine.Scanner, m *machines.Match) (interface{}, error) {
@@ -42,11 +42,13 @@ func (c *condition) Scan(token *lexmachine.Token, s *tester.Suite) error {
 	n := len(s.Tests) - 1
 	val, _ := token.Value.(string)
 
-	//@todo read lines
-
-	err := c.scanConds([]byte(val), &s.Tests[n])
-	if err != nil {
-		return fmt.Errorf("failed to scan conditions, %s", err)
+	lines := strings.Split(val, "\n")
+	for _, line := range lines {
+		cond, err := c.scanConds([]byte(line))
+		if err != nil {
+			continue
+		}
+		s.Tests[n].Conditions = append(s.Tests[n].Conditions, cond)
 	}
 	return nil
 }
@@ -55,7 +57,7 @@ func (*condition) Cmd() tester.CmdFunc {
 	return nil
 }
 
-func (c *condition) scanConds(in []byte, t *tester.Test) error {
+func (c *condition) scanConds(in []byte) (tester.Condition, error) {
 	var (
 		cond  = tester.Condition{}
 		order int
@@ -70,9 +72,12 @@ func (c *condition) scanConds(in []byte, t *tester.Test) error {
 		order++
 	})
 	if err != nil {
-		return err
+		return cond, err
 	}
 
-	t.Conditions = append(t.Conditions, cond)
-	return nil
+	if len(cond) == 0 {
+		return cond, fmt.Errorf("empty condition")
+	}
+
+	return cond, nil
 }

@@ -44,7 +44,7 @@ func (*conditionEqual) Cmd() tester.CmdFunc {
 			return nil, fmt.Errorf("assert equal, is not string, %s", s)
 		}
 		if s != val {
-			return nil, fmt.Errorf("assert equal, not equal %s != %v", s, val)
+			return nil, fmt.Errorf("assert equal, not equal '%s' != '%v'", s, val)
 		}
 		return "true", nil
 	}
