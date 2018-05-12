@@ -65,3 +65,54 @@ mutation UpdateTopics($input: UpdateTopicsInput!){
 jq data.updateTopics.repository.repositoryTopics.totalCount | equal 1
 jq data.updateTopics.repository.name | equal graphql-tester
 jq data.updateTopics.repository.repositoryTopics.nodes.[0].topic.name | equal version-0-0-8
+
+
+
+=== Check topic in repo
+
+---query
+query Repository($owner: String!, $name: String!){
+  repository(owner: $owner, name: $name){
+    name
+    repositoryTopics(first:1){
+      nodes{
+        ... on RepositoryTopic{
+          topic{
+            ... on Topic{
+              name
+            }
+          }
+        }
+      }
+      totalCount
+    }
+  }
+}
+
+---query_var
+{
+    "variables":{
+        "owner": "imega",
+        "name": "graphql-tester"
+    },
+    "operationName": "Repository"
+}
+
+---expected_response
+{
+   "data" : {
+      "repository" : {
+         "repositoryTopics" : {
+            "nodes" : [
+               {
+                  "topic" : {
+                     "name" : "version-0-0-8"
+                  }
+               }
+            ],
+            "totalCount" : 1
+         },
+         "name" : "graphql-tester"
+      }
+   }
+}
